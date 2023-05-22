@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Villafy_Api.Data;
-using Villafy_Api.Logging;
 using Villafy_Api.Models;
 using Villafy_Api.Models.Dto;
+using Villafy_Api.Repository.IRepository;
 
 namespace Villafy_Api.Controllers
 {
@@ -20,20 +18,21 @@ namespace Villafy_Api.Controllers
         //{
         //    _logger = logger;
         //}
-        private readonly ILogging _logger;
+        //private readonly ILogging _logger;
         private readonly IMapper _mapper;
-        private readonly ApplicationDbContext _dbContext;
-        public VillaAPIController(ApplicationDbContext dbContext, IMapper mapper)
+        //private readonly ApplicationDbContext _dbContext;
+        private readonly IVillaRepository _dbVilla;
+        public VillaAPIController(IVillaRepository dbVilla, IMapper mapper)
         {
             //_logger = logger;
-            _dbContext = dbContext;
             _mapper = mapper;
+            _dbVilla = dbVilla;
         }
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<VillaDto>>> GetVillas()
         {
-            IEnumerable<Villa> villaList = await _dbContext.Villas.ToListAsync();
+            IEnumerable<Villa> villaList = await _dbVilla.GetAllAsync();
             //var villaList = VillaStore.VillaList;
 
             //_logger.LogInformation("Logging all villas");
@@ -49,7 +48,7 @@ namespace Villafy_Api.Controllers
         public async Task<ActionResult<VillaDto>> GetVilla(int id)
         {
             //var villa = VillaStore.VillaList.FirstOrDefault(v => v.Id == id);
-            var villa = await _dbContext.Villas.FirstOrDefaultAsync(v => v.Id == id);
+            var villa = await _dbVilla.GetAsync(v => v.Id == id);
 
             if (id == 0)
             {
@@ -80,7 +79,7 @@ namespace Villafy_Api.Controllers
 
             ///CUSTOM MODELSTATE VALIDATION
             //if ((VillaStore.VillaList.FirstOrDefault(u => u.Name.ToLower() == villa.Name.ToLower()) != null))
-            if ((await _dbContext.Villas.FirstOrDefaultAsync(u => u.Name.ToLower() == villaCreateDto.Name.ToLower()) != null))
+            if ((await _dbVilla.GetAsync(u => u.Name.ToLower() == villaCreateDto.Name.ToLower()) != null))
             {
                 ModelState.AddModelError("Customer Error", "Villa Already Exists");
                 return BadRequest(ModelState);
@@ -113,8 +112,7 @@ namespace Villafy_Api.Controllers
             //VillaStore.VillaList.Add(villa);
             Villa model = _mapper.Map<Villa>(villaCreateDto);
 
-            await _dbContext.Villas.AddAsync(model);
-            await _dbContext.SaveChangesAsync();
+            await _dbVilla.CreateAsync(model);
             //return Ok(villa);
 
             return CreatedAtRoute("GetVilla", new { id = model.Id }, model);
@@ -134,15 +132,14 @@ namespace Villafy_Api.Controllers
 
             //var villa = VillaStore.VillaList.FirstOrDefault(v => v.Id == id);
 
-            var villa = await _dbContext.Villas.FirstOrDefaultAsync(v => v.Id == id);
+            var villa = await _dbVilla.GetAsync(v => v.Id == id);
             if (villa == null)
             {
                 return NotFound();
             }
 
             //VillaStore.VillaList.Remove(villa);
-            _dbContext.Villas.Remove(villa);
-            await _dbContext.SaveChangesAsync();
+            await _dbVilla.Remove(villa);
             return NoContent();
         }
 
@@ -176,8 +173,7 @@ namespace Villafy_Api.Controllers
             //};
 
             Villa model = _mapper.Map<Villa>(villaUpdateDto);
-            _dbContext.Villas.Update(model);
-            await _dbContext.SaveChangesAsync();
+            await _dbVilla.UpdateAsync(model);
             return NoContent();
 
         }
@@ -193,7 +189,7 @@ namespace Villafy_Api.Controllers
                 return BadRequest();
             }
             //var villa = VillaStore.VillaList.FirstOrDefault(v => v.Id == id);
-            var villa = await _dbContext.Villas.AsNoTracking().FirstOrDefaultAsync(v => v.Id == id);
+            var villa = await _dbVilla.GetAsync(v => v.Id == id, tracked: false);
             VillaUpdateDto villaUpdateDto = _mapper.Map<VillaUpdateDto>(villa);
             if (villa == null)
             {
@@ -227,8 +223,8 @@ namespace Villafy_Api.Controllers
 
             //};
             Villa model = _mapper.Map<Villa>(villaUpdateDto);
-            _dbContext.Villas.Update(model);
-            await _dbContext.SaveChangesAsync();
+            await _dbVilla.UpdateAsync(model);
+            //_dbContext.Villas.Update(model);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

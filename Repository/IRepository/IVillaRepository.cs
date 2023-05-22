@@ -7,8 +7,9 @@ namespace Villafy_Api.Repository.IRepository
     {
         Task<List<Villa>> GetAllAsync(Expression<Func<Villa, bool>>? filter = null, bool tracked = true);
         Task<Villa> GetAsync(Expression<Func<Villa, bool>> filter = null, bool tracked = true);
-        Task Create(Villa entity);
+        Task CreateAsync(Villa entity);
+        Task UpdateAsync(Villa entity);
         Task Remove(Villa entity);
-        Task Save();
+        Task SaveAsync();
     }
 }

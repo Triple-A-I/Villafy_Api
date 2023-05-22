@@ -15,10 +15,10 @@ namespace Villafy_Api.Repository
             _dbContext = dbContext;
         }
 
-        public async Task Create(Villa entity)
+        public async Task CreateAsync(Villa entity)
         {
             await _dbContext.Villas.AddAsync(entity);
-            await Save();
+            await SaveAsync();
         }
 
         public async Task<List<Villa>> GetAllAsync(Expression<Func<Villa, bool>>? filter = null, bool tracked = true)
@@ -49,12 +49,20 @@ namespace Villafy_Api.Repository
         public async Task Remove(Villa entity)
         {
             _dbContext.Villas.Remove(entity);
-            await Save();
+            await SaveAsync();
         }
 
-        public async Task Save()
+
+
+        public async Task SaveAsync()
         {
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Villa entity)
+        {
+            _dbContext.Villas.Update(entity);
+            await SaveAsync();
         }
     }
 }
