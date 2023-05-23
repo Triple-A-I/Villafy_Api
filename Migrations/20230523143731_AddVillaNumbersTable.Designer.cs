@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Villafy_Api.Data;
 
@@ -11,9 +12,11 @@ using Villafy_Api.Data;
 namespace Villafy_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230523143731_AddVillaNumbersTable")]
+    partial class AddVillaNumbersTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,22 +87,6 @@ namespace Villafy_Api.Migrations
                     b.HasKey("VillaNo");
 
                     b.ToTable("VillaNumbers");
-
-                    b.HasData(
-                        new
-                        {
-                            VillaNo = 101,
-                            CreatedDate = new DateTime(2023, 5, 23, 17, 9, 11, 108, DateTimeKind.Local).AddTicks(791),
-                            SpecialDetails = "Details 1",
-                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            VillaNo = 102,
-                            CreatedDate = new DateTime(2023, 5, 23, 17, 9, 11, 108, DateTimeKind.Local).AddTicks(896),
-                            SpecialDetails = "Details 2",
-                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 #pragma warning restore 612, 618
         }

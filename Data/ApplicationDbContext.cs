@@ -9,34 +9,20 @@ namespace Villafy_Api.Data
         {
 
         }
-        public DbSet<Villa> Villas { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Villa>().HasData(
-                new Villa
-                {
-                    Id = 1,
-                    Amenity = "",
-                    Details = "",
-                    ImageUrl = "",
-                    Name = "Royal View",
-                    Occupancy = 4,
-                    Rate = 7,
-                    Sqft = 350
-                }, new Villa
-                {
-                    Id = 2,
-                    Amenity = "",
-                    Details = "",
-                    ImageUrl = "",
-                    Name = "Beach View",
-                    Occupancy = 6,
-                    Rate = 9,
-                    Sqft = 650
+            modelBuilder.Entity<VillaNumber>().HasData(
+                new List<VillaNumber>() {
+               new  VillaNumber{ VillaNo = 101, SpecialDetails = "Details 1", CreatedDate = DateTime.Now },
+               new  VillaNumber{ VillaNo = 102, SpecialDetails = "Details 2", CreatedDate = DateTime.Now },
                 }
-
                 );
+            //modelBuilder.Entity<Blogg>()
+            //    .HasOne(b => b.BlogImage)
+            //    .WithOne(i => i.Blogg)
+            //    .HasForeignKey<BlogImage>(b => b.BloggFK);
         }
+        public DbSet<Villa> Villas { get; set; }
+        public DbSet<VillaNumber> VillaNumbers { get; set; }
     }
 }
