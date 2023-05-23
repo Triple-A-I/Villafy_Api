@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using Villafy_Api.Models;
 using Villafy_Api.Models.Dto;
 using Villafy_Api.Repository.IRepository;
@@ -22,22 +23,26 @@ namespace Villafy_Api.Controllers
         private readonly IMapper _mapper;
         //private readonly ApplicationDbContext _dbContext;
         private readonly IVillaRepository _dbVilla;
+        protected APIResponse _response;
         public VillaAPIController(IVillaRepository dbVilla, IMapper mapper)
         {
             //_logger = logger;
             _mapper = mapper;
             _dbVilla = dbVilla;
+            this._response = new();
         }
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<VillaDto>>> GetVillas()
+        public async Task<ActionResult<APIResponse>> GetVillas()
         {
             IEnumerable<Villa> villaList = await _dbVilla.GetAllAsync();
+            _response.Result = _mapper.Map<List<VillaDto>>(villaList);
+            _response.statusCode = HttpStatusCode.OK;
             //var villaList = VillaStore.VillaList;
 
             //_logger.LogInformation("Logging all villas");
             //_logger.Log("Getting All Villas", "info");
-            return Ok(_mapper.Map<List<VillaDto>>(villaList));
+            return Ok(_response);
         }
 
         [HttpGet("{id:int}", Name = "GetVilla")]
@@ -45,23 +50,35 @@ namespace Villafy_Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public async Task<ActionResult<VillaDto>> GetVilla(int id)
+        public async Task<ActionResult<APIResponse>> GetVilla(int id)
         {
             //var villa = VillaStore.VillaList.FirstOrDefault(v => v.Id == id);
             var villa = await _dbVilla.GetAsync(v => v.Id == id);
 
             if (id == 0)
             {
+                _response.statusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+
+                _response.ErrorMessages = new List<string> { "Invalid Update because  = 0 " };
+
+                return BadRequest(_response);
                 //_logger.LogError("Logging invald id " + id);
                 //_logger.Log($"Logging invald id {id}", "error");
-                return BadRequest("Invalid Id");
+
             }
             if (villa == null)
             {
-                return NotFound("Villa not found");
-            }
+                _response.statusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Villa Not Found " };
 
-            return Ok(_mapper.Map<VillaDto>(villa));
+
+                return NotFound(_response);
+            }
+            _response.Result = _mapper.Map<VillaDto>(villa);
+            _response.statusCode = HttpStatusCode.OK;
+            return Ok(_response);
 
         }
 
@@ -69,7 +86,7 @@ namespace Villafy_Api.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<VillaDto>> CreateVilla([FromBody] VillaCreateDto villaCreateDto)
+        public async Task<ActionResult<APIResponse>> CreateVilla([FromBody] VillaCreateDto villaCreateDto)
         {
             /// If you neglect [ApiController] you will use modelState
             //if (!ModelState.IsValid)
@@ -81,15 +98,22 @@ namespace Villafy_Api.Controllers
             //if ((VillaStore.VillaList.FirstOrDefault(u => u.Name.ToLower() == villa.Name.ToLower()) != null))
             if ((await _dbVilla.GetAsync(u => u.Name.ToLower() == villaCreateDto.Name.ToLower()) != null))
             {
-                ModelState.AddModelError("Customer Error", "Villa Already Exists");
-                return BadRequest(ModelState);
+                _response.statusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Villa Already Exists" };
+                return BadRequest(_response);
+                //ModelState.AddModelError("Customer Error", "Villa Already Exists");
+                //return BadRequest(ModelState);
             }
             {
 
             }
             if (villaCreateDto == null)
             {
-                return BadRequest();
+                _response.statusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "Not Valid" };
+                return BadRequest(_response);
             }
             //if (villa.Id > 0)
             //{
@@ -110,24 +134,30 @@ namespace Villafy_Api.Controllers
             //    Rate = villa.Rate,
             //};
             //VillaStore.VillaList.Add(villa);
-            Villa model = _mapper.Map<Villa>(villaCreateDto);
+            Villa villa = _mapper.Map<Villa>(villaCreateDto);
 
-            await _dbVilla.CreateAsync(model);
+
+            await _dbVilla.CreateAsync(villa);
             //return Ok(villa);
+            _response.Result = _mapper.Map<VillaDto>(villa);
+            _response.statusCode = HttpStatusCode.Created;
 
-            return CreatedAtRoute("GetVilla", new { id = model.Id }, model);
+            return CreatedAtRoute("GetVilla", new { id = villa.Id }, _response);
         }
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{id:int}", Name = "DeleteVilla")]
 
-        public async Task<ActionResult> DeleteVilla(int id)
+        public async Task<ActionResult<APIResponse>> DeleteVilla(int id)
         {
 
             if (id == 0)
             {
-                return BadRequest();
+                _response.statusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "Invalid Id = 0" };
+                return BadRequest(_response);
             }
 
             //var villa = VillaStore.VillaList.FirstOrDefault(v => v.Id == id);
@@ -135,12 +165,17 @@ namespace Villafy_Api.Controllers
             var villa = await _dbVilla.GetAsync(v => v.Id == id);
             if (villa == null)
             {
-                return NotFound();
+                _response.statusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "Villa Not Found" };
+                return BadRequest(_response);
             }
 
             //VillaStore.VillaList.Remove(villa);
             await _dbVilla.Remove(villa);
-            return NoContent();
+            _response.statusCode = HttpStatusCode.NoContent;
+            _response.IsSuccess = true;
+            return Ok(_response);
         }
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -151,7 +186,10 @@ namespace Villafy_Api.Controllers
         {
             if (villaUpdateDto == null || id != villaUpdateDto.Id)
             {
-                return BadRequest();
+                _response.statusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "Invalid Update because it's null or Id Not Found" };
+                return BadRequest(_response);
             }
 
             //var villa = VillaStore.VillaList.FirstOrDefault(v => v.Id == id);
@@ -174,7 +212,9 @@ namespace Villafy_Api.Controllers
 
             Villa model = _mapper.Map<Villa>(villaUpdateDto);
             await _dbVilla.UpdateAsync(model);
-            return NoContent();
+            _response.statusCode = HttpStatusCode.NoContent;
+            _response.IsSuccess = true;
+            return Ok(_response);
 
         }
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -186,14 +226,20 @@ namespace Villafy_Api.Controllers
 
             if (id == 0 || jsonPatch == null)
             {
-                return BadRequest();
+                _response.statusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "Invalid Update because Id = 0 " };
+                return BadRequest(_response);
             }
             //var villa = VillaStore.VillaList.FirstOrDefault(v => v.Id == id);
             var villa = await _dbVilla.GetAsync(v => v.Id == id, tracked: false);
             VillaUpdateDto villaUpdateDto = _mapper.Map<VillaUpdateDto>(villa);
             if (villa == null)
             {
-                return BadRequest();
+                _response.statusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "Invalid Update because  Id is Not Found " };
+                return BadRequest(_response);
             }
             //VillaUpdateDto villaDto = new()
             //{
@@ -227,9 +273,16 @@ namespace Villafy_Api.Controllers
             //_dbContext.Villas.Update(model);
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                _response.statusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "Invalid Update" };
+                return BadRequest(_response);
             }
-            return NoContent();
+            _response.statusCode = HttpStatusCode.NoContent;
+            _response.IsSuccess = true;
+            return Ok(_response);
+
+
         }
     }
 }
