@@ -18,5 +18,6 @@ namespace Villafy_Api.Models
 
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
+
     }
 }
