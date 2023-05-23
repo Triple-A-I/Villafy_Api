@@ -10,9 +10,13 @@ namespace Villafy_Api
         {
             CreateMap<Villa, VillaDto>();
             CreateMap<VillaDto, Villa>();
+
             ///Or Using Reverse
             CreateMap<Villa, VillaCreateDto>().ReverseMap();
             CreateMap<Villa, VillaUpdateDto>().ReverseMap();
+
+            CreateMap<VillaNumber, VillaNumberDto>().ReverseMap();
+
         }
     }
 }
