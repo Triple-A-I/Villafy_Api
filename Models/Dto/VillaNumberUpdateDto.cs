@@ -8,6 +8,5 @@ namespace Villafy_Api.Models.Dto
         public int VillaNo { get; set; }
         public string SpecialDetails { get; set; }
 
-        public DateTime UpdatedDate { get; set; }
     }
 }

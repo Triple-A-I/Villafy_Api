@@ -98,9 +98,7 @@ namespace Villafy_Api.Controllers
                     return NotFound(_response);
 
                 }
-                {
 
-                }
                 if (villaCreateDto == null)
                 {
                     _response.statusCode = HttpStatusCode.NotFound;
@@ -120,12 +118,12 @@ namespace Villafy_Api.Controllers
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString()
-    };
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
 
             }
             return _response;
         }
+
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
