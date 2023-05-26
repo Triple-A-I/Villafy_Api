@@ -4,7 +4,7 @@ namespace Villafy_Api.Models.Dto
 {
     public class VillaUpdateDto
     {
-        public int Id { get; set; }
+        public int VillaId { get; set; }
 
         [Required]
         [MaxLength(30)]

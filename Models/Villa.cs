@@ -7,7 +7,7 @@ namespace Villafy_Api.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int VillaId { get; set; }
         public string Name { get; set; }
         public string Details { get; set; }
         public double Rate { get; set; }
@@ -18,6 +18,7 @@ namespace Villafy_Api.Models
 
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
+        public ICollection<VillaNumber> VillaNumbers { get; set; }
 
     }
 }

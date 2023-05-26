@@ -11,12 +11,12 @@ namespace Villafy_Api.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<VillaNumber>().HasData(
-                new List<VillaNumber>() {
-               new  VillaNumber{ VillaNo = 101, SpecialDetails = "Details 1", CreatedDate = DateTime.Now },
-               new  VillaNumber{ VillaNo = 102, SpecialDetails = "Details 2", CreatedDate = DateTime.Now },
-                }
-                );
+            //modelBuilder.Entity<VillaNumber>().HasData(
+            //    new List<VillaNumber>() {
+            //   new  VillaNumber{ VillaNo = 101, SpecialDetails = "Details 1", CreatedDate = DateTime.Now },
+            //   new  VillaNumber{ VillaNo = 102, SpecialDetails = "Details 2", CreatedDate = DateTime.Now },
+            //    }
+            //    );
             //modelBuilder.Entity<Blogg>()
             //    .HasOne(b => b.BlogImage)
             //    .WithOne(i => i.Blogg)

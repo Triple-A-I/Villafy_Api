@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Villafy_Api.Migrations
 {
     /// <inheritdoc />
-    public partial class refersh : Migration
+    public partial class refresh : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +15,7 @@ namespace Villafy_Api.Migrations
                 name: "Villas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    VillaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Details = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -31,22 +29,42 @@ namespace Villafy_Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Villas", x => x.Id);
+                    table.PrimaryKey("PK_Villas", x => x.VillaId);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Villas",
-                columns: new[] { "Id", "Amenity", "CreateDate", "Details", "ImageUrl", "Name", "Occupancy", "Rate", "Sqft", "UpdateDate" },
-                values: new object[,]
+            migrationBuilder.CreateTable(
+                name: "VillaNumbers",
+                columns: table => new
                 {
-                    { 1, "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "", "", "Royal View", 4, 7.0, 350, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "", "", "Beach View", 6, 9.0, 650, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    VillaNo = table.Column<int>(type: "int", nullable: false),
+                    SpecialDetails = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    VillaId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VillaNumbers", x => x.VillaNo);
+                    table.ForeignKey(
+                        name: "FK_VillaNumbers_Villas_VillaId",
+                        column: x => x.VillaId,
+                        principalTable: "Villas",
+                        principalColumn: "VillaId",
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VillaNumbers_VillaId",
+                table: "VillaNumbers",
+                column: "VillaId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "VillaNumbers");
+
             migrationBuilder.DropTable(
                 name: "Villas");
         }

@@ -11,5 +11,7 @@ namespace Villafy_Api.Models
 
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
+        public Villa Villa { get; set; }
+        public int VillaId { get; set; }
     }
 }

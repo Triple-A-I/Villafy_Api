@@ -15,12 +15,14 @@ namespace Villafy_Api.Controllers
     {
         private readonly IVillaNumberRepository _villaNumberDb;
         private readonly IMapper _mapper;
-
-        public VillaNumberAPIController(IMapper mapper, IVillaNumberRepository villaNumberRepository)
+        private readonly IVillaRepository _villaDb;
+        public VillaNumberAPIController(IMapper mapper, IVillaNumberRepository villaNumberRepository, IVillaRepository villaDb)
         {
             _mapper = mapper;
             _villaNumberDb = villaNumberRepository;
             this._response = new();
+            _villaDb = villaDb;
+
         }
 
         protected APIResponse _response;
@@ -101,6 +103,12 @@ namespace Villafy_Api.Controllers
                     return NotFound(_response);
 
                 }
+                if (await _villaDb.GetAsync(u => u.VillaId == villaNumberCreateDto.VillaId) == null)
+                {
+                    _response.statusCode = HttpStatusCode.NotFound;
+                    _response.ErrorMessages = new List<string> { "VillaId is Invalid" };
+                    return NotFound(_response);
+                }
 
                 if (villaNumberCreateDto == null)
                 {
@@ -116,7 +124,7 @@ namespace Villafy_Api.Controllers
                 _response.Result = _mapper.Map<VillaNumberDto>(villaNo);
                 _response.statusCode = HttpStatusCode.Created;
 
-                return CreatedAtRoute("GetVilla", new { villaNo = villaNo.VillaNo }, _response);
+                return CreatedAtRoute("GetVillaNumber", new { villaNo = villaNo.VillaNo }, _response);
             }
             catch (Exception ex)
             {
@@ -172,6 +180,15 @@ namespace Villafy_Api.Controllers
                     _response.ErrorMessages = new List<string> { "Invalid Update because it's null or villaNo Not Found" };
                     return BadRequest(_response);
                 }
+
+                if (await _villaDb.GetAsync(u => u.VillaId == villanumberUpdateDto.VillaId) == null)
+                {
+                    _response.statusCode = HttpStatusCode.NotFound;
+                    _response.ErrorMessages = new List<string> { "VillaId is Invalid" };
+                    return NotFound(_response);
+                }
+
+
                 var villaNumber = await _villaNumberDb.GetAsync(v => v.VillaNo == villaNo, tracked: false);
                 if (villaNumber == null)
                 {

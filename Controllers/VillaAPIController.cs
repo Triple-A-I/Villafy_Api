@@ -54,7 +54,7 @@ namespace Villafy_Api.Controllers
         {
             try
             {
-                var villa = await _dbVilla.GetAsync(v => v.Id == id);
+                var villa = await _dbVilla.GetAsync(v => v.VillaId == id);
 
                 if (id == 0)
                 {
@@ -113,7 +113,7 @@ namespace Villafy_Api.Controllers
                 _response.Result = _mapper.Map<VillaDto>(villa);
                 _response.statusCode = HttpStatusCode.Created;
 
-                return CreatedAtRoute("GetVilla", new { id = villa.Id }, _response);
+                return CreatedAtRoute("GetVilla", new { id = villa.VillaId }, _response);
             }
             catch (Exception ex)
             {
@@ -140,7 +140,7 @@ namespace Villafy_Api.Controllers
                     return BadRequest(_response);
                 }
 
-                var villa = await _dbVilla.GetAsync(v => v.Id == id);
+                var villa = await _dbVilla.GetAsync(v => v.VillaId == id);
                 if (villa == null)
                 {
                     _response.statusCode = HttpStatusCode.NotFound;
@@ -169,13 +169,13 @@ namespace Villafy_Api.Controllers
         {
             try
             {
-                if (villaUpdateDto == null || id != villaUpdateDto.Id)
+                if (villaUpdateDto == null || id != villaUpdateDto.VillaId)
                 {
                     _response.statusCode = HttpStatusCode.BadRequest;
                     _response.ErrorMessages = new List<string> { "Invalid Update because it's null or Id Not Found" };
                     return BadRequest(_response);
                 }
-                var villa = await _dbVilla.GetAsync(v => v.Id == id, tracked: false);
+                var villa = await _dbVilla.GetAsync(v => v.VillaId == id, tracked: false);
                 if (villa == null)
                 {
                     _response.statusCode = HttpStatusCode.BadRequest;
@@ -211,7 +211,7 @@ namespace Villafy_Api.Controllers
                     return BadRequest(_response);
                 }
                 //var villa = VillaStore.VillaList.FirstOrDefault(v => v.Id == id);
-                var villa = await _dbVilla.GetAsync(v => v.Id == id, tracked: false);
+                var villa = await _dbVilla.GetAsync(v => v.VillaId == id, tracked: false);
                 VillaUpdateDto villaUpdateDto = _mapper.Map<VillaUpdateDto>(villa);
                 if (villa == null)
                 {

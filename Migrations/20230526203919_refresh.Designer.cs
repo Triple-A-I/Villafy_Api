@@ -12,8 +12,8 @@ using Villafy_Api.Data;
 namespace Villafy_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230523143731_AddVillaNumbersTable")]
-    partial class AddVillaNumbersTable
+    [Migration("20230526203919_refresh")]
+    partial class refresh
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,11 @@ namespace Villafy_Api.Migrations
 
             modelBuilder.Entity("Villafy_Api.Models.Villa", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("VillaId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VillaId"));
 
                     b.Property<string>("Amenity")
                         .IsRequired()
@@ -64,7 +64,7 @@ namespace Villafy_Api.Migrations
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.HasKey("VillaId");
 
                     b.ToTable("Villas");
                 });
@@ -84,9 +84,30 @@ namespace Villafy_Api.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("VillaId")
+                        .HasColumnType("int");
+
                     b.HasKey("VillaNo");
 
+                    b.HasIndex("VillaId");
+
                     b.ToTable("VillaNumbers");
+                });
+
+            modelBuilder.Entity("Villafy_Api.Models.VillaNumber", b =>
+                {
+                    b.HasOne("Villafy_Api.Models.Villa", "Villa")
+                        .WithMany("VillaNumbers")
+                        .HasForeignKey("VillaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Villa");
+                });
+
+            modelBuilder.Entity("Villafy_Api.Models.Villa", b =>
+                {
+                    b.Navigation("VillaNumbers");
                 });
 #pragma warning restore 612, 618
         }
