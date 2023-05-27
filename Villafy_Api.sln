@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Villafy_Api", "Villafy_Api.csproj", "{E7373BF6-4ABE-449C-B9AD-B12EAE0DAB4C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VillaWeb", "..\VillaWeb\VillaWeb.csproj", "{4352F6F1-EF9B-48AE-B158-7CCDC00E63DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{E7373BF6-4ABE-449C-B9AD-B12EAE0DAB4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7373BF6-4ABE-449C-B9AD-B12EAE0DAB4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7373BF6-4ABE-449C-B9AD-B12EAE0DAB4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4352F6F1-EF9B-48AE-B158-7CCDC00E63DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4352F6F1-EF9B-48AE-B158-7CCDC00E63DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4352F6F1-EF9B-48AE-B158-7CCDC00E63DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4352F6F1-EF9B-48AE-B158-7CCDC00E63DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

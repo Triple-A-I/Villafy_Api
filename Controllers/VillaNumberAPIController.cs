@@ -224,7 +224,7 @@ namespace Villafy_Api.Controllers
                     _response.ErrorMessages = new List<string> { "Invalid Update because Id = 0 " };
                     return BadRequest(_response);
                 }
-                //var villa = VillaStore.VillaList.FirstOrDefault(v => v.Id == id);
+
                 var villaNumber = await _villaNumberDb.GetAsync(v => v.VillaNo == villNo, tracked: false);
                 VillaNumberUpdateDto villaNumberUpdateDto = _mapper.Map<VillaNumberUpdateDto>(villaNumber);
                 if (villaNumber == null)
