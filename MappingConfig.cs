@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Villafy_Api.Models;
-using Villafy_Api.Models.Dto;
+using Villafy_Api.Models.Dto.Auth;
+using Villafy_Api.Models.Dto.Villa;
+using Villafy_Api.Models.Dto.VillaNumber;
 
 namespace Villafy_Api
 {
@@ -18,6 +20,8 @@ namespace Villafy_Api
             CreateMap<VillaNumber, VillaNumberDto>().ReverseMap();
             CreateMap<VillaNumber, VillaNumberCreateDto>().ReverseMap();
             CreateMap<VillaNumber, VillaNumberUpdateDto>().ReverseMap();
+
+            CreateMap<LocalUser, RegistrationRequestDto>().ReverseMap();
 
         }
     }
