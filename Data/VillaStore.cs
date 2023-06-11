@@ -1,4 +1,4 @@
-﻿using Villafy_Api.Models.Dto;
+﻿using Villafy_Api.Models.Dto.Villa;
 
 namespace Villafy_Api.Data
 {
