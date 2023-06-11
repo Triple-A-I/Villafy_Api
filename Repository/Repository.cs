@@ -23,17 +23,24 @@ namespace Villafy_Api.Repository
             await SaveAsync();
         }
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, bool tracked = true)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, bool tracked = true, string? includeProperties = "")
         {
             IQueryable<T> query = dbSet;
             if (filter != null)
             {
                 query = query.Where(filter);
             }
+            if (includeProperties != null)
+            {
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
             return await query.ToListAsync();
         }
 
-        public async Task<T> GetAsync(Expression<Func<T, bool>>? filter = null, bool tracked = true)
+        public async Task<T> GetAsync(Expression<Func<T, bool>>? filter = null, bool tracked = true, string? includeProperties = "")
         {
             IQueryable<T> query = dbSet;
             if (filter != null)
@@ -44,6 +51,13 @@ namespace Villafy_Api.Repository
             {
                 query = query.AsNoTracking();
             }
+            if (includeProperties != null)
+            {
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
             return await query.FirstOrDefaultAsync();
 
         }
@@ -53,8 +67,6 @@ namespace Villafy_Api.Repository
             dbSet.Remove(entity);
             await SaveAsync();
         }
-
-
 
         public async Task SaveAsync()
         {
