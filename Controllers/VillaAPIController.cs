@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Villafy_Api.Models;
-using Villafy_Api.Models.Dto;
+using Villafy_Api.Models.Dto.Villa;
 using Villafy_Api.Repository.IRepository;
 
 namespace Villafy_Api.Controllers
@@ -12,6 +13,8 @@ namespace Villafy_Api.Controllers
     [Route("api/VillaAPI")]
 
     [ApiController]
+    //[Produces("application/json")]
+    //[Consumes("application/json")]
     public class VillaAPIController : ControllerBase
     {
 
@@ -26,6 +29,8 @@ namespace Villafy_Api.Controllers
         }
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
+
+
         public async Task<ActionResult<APIResponse>> GetVillas()
         {
             try
@@ -49,6 +54,9 @@ namespace Villafy_Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize(Roles = "admin")]
 
         public async Task<ActionResult<APIResponse>> GetVilla(int id)
         {
@@ -87,6 +95,10 @@ namespace Villafy_Api.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize(Roles = "admin")]
+
         public async Task<ActionResult<APIResponse>> CreateVilla([FromBody] VillaCreateDto villaCreateDto)
         {
             try
@@ -127,8 +139,10 @@ namespace Villafy_Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{id:int}", Name = "DeleteVilla")]
-
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<APIResponse>> DeleteVilla(int id)
         {
             try
@@ -164,7 +178,11 @@ namespace Villafy_Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut("{id:int}", Name = "UpdateVilla")]
+        [Authorize(Roles = "admin")]
+
         public async Task<ActionResult<APIResponse>> UpdateVilla(int id, [FromBody] VillaUpdateDto villaUpdateDto)
         {
             try
@@ -199,7 +217,11 @@ namespace Villafy_Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPatch("{id:int}", Name = "UpdatePartialVilla")]
+        [Authorize(Roles = "admin")]
+
         public async Task<ActionResult<APIResponse>> UpdatePartialVilla(int id, JsonPatchDocument<VillaUpdateDto> jsonPatch)
         {
             try
@@ -210,7 +232,6 @@ namespace Villafy_Api.Controllers
                     _response.ErrorMessages = new List<string> { "Invalid Update because Id = 0 " };
                     return BadRequest(_response);
                 }
-                //var villa = VillaStore.VillaList.FirstOrDefault(v => v.Id == id);
                 var villa = await _dbVilla.GetAsync(v => v.VillaId == id, tracked: false);
                 VillaUpdateDto villaUpdateDto = _mapper.Map<VillaUpdateDto>(villa);
                 if (villa == null)
