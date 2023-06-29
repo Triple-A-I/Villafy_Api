@@ -35,9 +35,9 @@ namespace Villafy_Api.Repository
 
         public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
         {
-            var user = _dbContext.LocalUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName
+            var localUser = _dbContext.LocalUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName
             && u.Password == loginRequestDto.Password);
-            if (user == null)
+            if (localUser == null)
             {
                 return new LoginResponseDto()
                 {
@@ -56,8 +56,8 @@ namespace Villafy_Api.Repository
             {
                 Subject = new ClaimsIdentity(new Claim[]
             {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Name, localUser.UserName),
+                new Claim(ClaimTypes.Role, localUser.Role)
             }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -67,7 +67,7 @@ namespace Villafy_Api.Repository
             LoginResponseDto loginResponseDto = new LoginResponseDto()
             {
                 Token = tokenHandler.WriteToken(token),
-                LocalUser = user
+                LocalUser = localUser
             };
 
             return loginResponseDto;

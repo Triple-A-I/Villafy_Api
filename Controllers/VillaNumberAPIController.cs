@@ -50,11 +50,11 @@ namespace Villafy_Api.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("{villaNo:int}", Name = "GetVillaNumber")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize(Roles = "admin")]
 
         public async Task<ActionResult<APIResponse>> GetVillaNumber(int villaNo)
         {
@@ -90,11 +90,11 @@ namespace Villafy_Api.Controllers
             return _response;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [Authorize(Roles = "admin")]
 
         public async Task<ActionResult<APIResponse>> CreateVillaNumber([FromBody] VillaNumberCreateDto villaNumberCreateDto)
         {
@@ -139,11 +139,11 @@ namespace Villafy_Api.Controllers
             return _response;
         }
 
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{villaNo:int}", Name = "DeleteVillaNumber")]
-        [Authorize(Roles = "admin")]
 
 
         public async Task<ActionResult<APIResponse>> DeleteVillaNumber(int villaNo)
@@ -172,11 +172,11 @@ namespace Villafy_Api.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPut("{villaNo:int}", Name = "UpdateVillaNumber")]
-        [Authorize(Roles = "admin")]
 
         public async Task<ActionResult<APIResponse>> UpdateVilla(int villaNo, [FromBody] VillaNumberUpdateDto villanumberUpdateDto)
         {
